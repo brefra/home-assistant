@@ -1,5 +1,5 @@
 """Support for Velbus sensors."""
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import STATE_CLASS_MEASUREMENT, SensorEntity
 from homeassistant.const import DEVICE_CLASS_POWER, ENERGY_KILO_WATT_HOUR
 
 from . import VelbusEntity
@@ -43,6 +43,13 @@ class VelbusSensor(VelbusEntity, SensorEntity):
                 return DEVICE_CLASS_POWER
             return None
         return self._module.get_class(self._channel)
+
+    @property
+    def state_class(self) -> str | None:
+        """Return the state class of this entity."""
+        if self._module.get_class(self._channel) == "temperature":
+            return STATE_CLASS_MEASUREMENT
+        return None
 
     @property
     def state(self):
